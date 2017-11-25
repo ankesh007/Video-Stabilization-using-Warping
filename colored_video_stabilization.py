@@ -16,15 +16,34 @@ fps=10
 # print target.shape
 target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
 target=cv2.resize(target,(breadth,length))
+
+def get_points(img):
+    points = []
+    img_to_show = img.copy()
+    def draw_circle(event,x,y,flags,param):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            cv2.circle(img_to_show,(x,y),2,(255,0,0),-1)
+            points.append([x,y])
+    cv2.namedWindow('image')
+    cv2.setMouseCallback('image',draw_circle)
+    while(1):
+        cv2.imshow('image',img_to_show)
+        k = cv2.waitKey(20) & 0xFF
+        if k == 27:
+            break
+    cv2.destroyAllWindows()
+    return points
+
+points_on_image=get_points(target)
 target = target.astype('float32')
+target=target[points_on_image[0][1]:points_on_image[1][1],points_on_image[0][0]:points_on_image[1][0]]
 shape_image=target.shape
+# print shape_image
 fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 out = cv2.VideoWriter(output_video_path+'.avi',fourcc, fps, (breadth,length))
+# print target.shape
+# exit(1)
 process_after=1
-# source=cv2.imread(sys.argv[1])
-# source=cv2.cvtColor(source, cv2.COLOR_BGR2GRAY)
-# source = source.astype('float32')
-
 error_val=0.005
 iteration_limit=2500
 parameters=6
@@ -147,10 +166,11 @@ while(1):
 		break
 
 	frame=cv2.resize(frame,(breadth,length))
-	frame_parameter=warper(frame)
-	frame=cv2.warpAffine(frame, np.transpose(np.reshape(frame_parameter,[3,2])), (target.shape[1],target.shape[0]))
-	# print frame.shape
-	# frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
+	frame_parameter=warper(frame[points_on_image[0][1]:points_on_image[1][1],points_on_image[0][0]:points_on_image[1][0]])
+	frame_parameter[4]=frame_parameter[4]+points_on_image[0][0]-frame_parameter[0]*points_on_image[0][0]-frame_parameter[2]*points_on_image[0][1]
+	frame_parameter[5]=frame_parameter[5]+points_on_image[0][1]-frame_parameter[1]*points_on_image[0][0]-frame_parameter[3]*points_on_image[0][1]
+	
+	frame=cv2.warpAffine(frame, np.transpose(np.reshape(frame_parameter,[3,2])), (frame.shape[1],frame.shape[0]))
 	frame.astype(np.uint8)
 	out.write(frame)
 	cv2.imshow("image",frame)
