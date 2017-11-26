@@ -38,7 +38,6 @@ def get_line(p1,p2):
 def affine_correct(input_image,points_on_image):
 
     # points_on_image=get_points(input_image)
-    print points_on_image
     if(len(points_on_image)<4):
         print "Incomplete Selection"
         return input_image
@@ -61,6 +60,10 @@ def affine_correct(input_image,points_on_image):
     return destination
     
 def metric_correction(image,refPt):
+
+    if(len(refPt)<4):
+        print "Incomplete Selection"
+        return image
 
 	pt1=np.asarray(refPt,dtype=np.float32)
 	dist=(refPt[1][0]-refPt[0][0])
