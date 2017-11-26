@@ -5,7 +5,7 @@ from scipy.ndimage import convolve
 import sys
 
 
-input_video_path=sys.argv[1]
+input_video_path=int(sys.argv[1])
 # input_video_path=0
 output_video_path=sys.argv[2]
 cap = cv2.VideoCapture(input_video_path)
@@ -42,7 +42,6 @@ shape_image=target.shape
 fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 out = cv2.VideoWriter(output_video_path+'.avi',fourcc, fps, (breadth,length))
 # print target.shape
-# exit(1)
 process_after=1
 error_val=0.005
 iteration_limit=2500
@@ -107,7 +106,6 @@ hessian=np.matmul(steepest_descent_transpose,steepest_descent)
 hessian=np.sum(np.sum(hessian,axis=0),axis=0)
 hessian_inv=np.linalg.inv(hessian)
 # print hessian_inv
-# exit(1)
 # print hessian.shape parameter*parameter
 
 # **********Precomutation Ends******************
@@ -120,7 +118,7 @@ def warper(image):
 	source=np.copy(image)
 	source = cv2.cvtColor(source, cv2.COLOR_BGR2GRAY)
 	# source=cv2.resize(source,(length,breadth))
-	coun=1
+	coun=0
 
 	while(True):
 
@@ -143,12 +141,12 @@ def warper(image):
 
 		delp_dimred=np.linalg.norm(del_p,axis=0)
 		# print delp_dimred
-
 		if error_val>delp_dimred:
 			return p
-			
 		if coun>iteration_limit:
 			return p
+
+			
 
 frame_count=0
 while(1):
