@@ -1,0 +1,54 @@
+
+\date{\today}
+\title{\vspace{-1cm}Affine and Metric Correction of Image}
+
+
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{cancel}
+
+
+\author{
+  Gupta, Ankesh\\
+  \texttt{2015CS10435}
+}
+% \renewcommand{\labelenumi}{\alph{enumi})}
+% \renewcommand{\@seccntformat}[1]{}
+% \makeatother
+\setcounter{secnumdepth}{0}% disables section numbering
+
+\begin{document}
+\maketitle
+
+\section{Problem Statement}
+\begin{itemize}
+    \item Take image as input and perform \emph{affine correction}.
+    \item Take image as input and perform \emph{metric correction}.
+\end{itemize}
+
+
+\section{Implementation}
+\begin{enumerate}
+    \item For affine correction, 2 sets of \emph{parallel lines} were manually detected.
+    \item Each set gives us a corresponding \emph{vanishing point}, giving us the \emph{vanishing line}.
+    \item This vanishing line $(l_1,l_2,l_3)$ is then mapped to \emph{line at infinity} using:
+    \[
+    \begin{bmatrix}
+    \centering
+    1 & 0 & 0 \\
+    0 & 1 & 1 \\
+    l_1 & l_2 & l_3
+    \end{bmatrix}
+    \]
+    \item For metric correction, we use the same 4 points as mentioned, 
+    \item These 4 points are mapped to an \emph{approximate square}.
+\end{enumerate}
+
+\section{Results}
+\begin{itemize}
+	\item Concatenated \emph{Image,Affine\_Correct,Metric\_Correct} image are present in \emph{CorrectedImage directory}.
+\end{itemize}
+
+\end{document}

@@ -77,23 +77,31 @@ def metric_correction(image,refPt):
 	return dst
 
 def main():
-    input_image_path=sys.argv[1]
-    image=cv2.imread(input_image_path)
-    points=get_points(image)
 
-    # Following function works when 4 points are selected such as 1,2,4,3 forms a square in anti-clockwise sense
-    affine_corrected=affine_correct(image,points)
-    metric_corrected=metric_correction(image,points)
-    print  affine_corrected.shape
-    print image.shape
-    print metric_corrected.shape
-    # mosaic_image=np.concatenate((image,np.ones([image.shape[0],3]),affine_corrected,np.ones([image.shape[0],3]),metric_corrected),axis=1)
-    mosaic_image=np.concatenate((image,affine_corrected,metric_corrected),axis=1)
-    # print mosaic_image.shape
-    cv2.imwrite("AffineCorrected.jpg",affine_corrected)
-    cv2.imwrite("MetricCorrected.jpg",metric_corrected)
-    cv2.imwrite("Mosaiced.jpg",mosaic_image)
-
+	if(len(sys.argv)<2):
+		print "Usage:<filename> <input_image_path>"
+		exit(1)
+	input_image_path=sys.argv[1]
+	image=cv2.imread(input_image_path)
+	points=get_points(image)
+	# Following function works when 4 points are selected such as 1,2,4,3 forms a square in anti-clockwise sense
+	affine_corrected=affine_correct(image,points)
+	metric_corrected=metric_correction(image,points)
+	print  affine_corrected.shape
+	print image.shape
+	print metric_corrected.shape
+	# mosaic_image=np.concatenate((image,np.ones([image.shape[0],3]),affine_corrected,np.ones([image.shape[0],3]),metric_corrected),axis=1)
+	mosaic_image=np.concatenate((image,affine_corrected,metric_corrected),axis=1)
+	# print mosaic_image.shape
+	name=sys.argv[1].split('/')
+	name=name[len(name)-1]
+	print name
+	name=name.split('.')[0]+"2"
+	# print name,"yo"
+	# exit(1)
+	cv2.imwrite("../CorrectedImage/AffineCorrected"+name+".jpg",affine_corrected)
+	cv2.imwrite("../CorrectedImage/MetricCorrected"+name+".jpg",metric_corrected)
+	cv2.imwrite("../CorrectedImage/Mosaiced"+name+".jpg",mosaic_image)
 
 if __name__=="__main__":
     main()

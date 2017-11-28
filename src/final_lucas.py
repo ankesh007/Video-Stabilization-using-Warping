@@ -3,15 +3,24 @@ import cv2
 from scipy.ndimage import convolve
 import sys
 
+if(len(sys.argv)<5):
+	print "Usage:<filename> <source image path> <target image path> <epsilon> <output_path>"
+	exit(1)
+
 source=cv2.imread(sys.argv[1])
 source=cv2.cvtColor(source, cv2.COLOR_BGR2GRAY)
 target=cv2.imread(sys.argv[2])
 target=cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
+scale=int(target.shape[0]/300)
+length=target.shape[0]/scale
+breadth=target.shape[1]/scale
+source=cv2.resize(source,(breadth,length))
+target=cv2.resize(target,(breadth,length))
 source = source.astype('float32')
 target = target.astype('float32')
 
 shape_image=source.shape
-error_val=0.005
+error_val=float(sys.argv[3])
 iteration_limit=2500
 parameters=6
 # image shape 720 X 1280
@@ -116,14 +125,11 @@ while(True):
 	# p=update_p_using_inverse(p,del_p)
 
 	delp_dimred=np.linalg.norm(del_p,axis=0)
-	print delp_dimred
+	print coun,delp_dimred
 
 	if error_val>delp_dimred:
+		cv2.imwrite(sys.argv[4],np.concatenate((source,warped_image,target),axis=1))
 		break
 	if coun>iteration_limit:
+		cv2.imwrite(sys.argv[4],np.concatenate((source,warped_image,target),axis=1))
 		break
-
-
-	# exit(1)
-
-

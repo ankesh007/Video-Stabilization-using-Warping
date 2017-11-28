@@ -5,7 +5,9 @@ from scipy.ndimage import convolve
 import sys
 
 
-input_video_path=int(sys.argv[1])
+input_video_path=(sys.argv[1])
+# print input_video_path
+# exit(1)
 # input_video_path=0
 output_video_path=sys.argv[2]
 cap = cv2.VideoCapture(input_video_path)

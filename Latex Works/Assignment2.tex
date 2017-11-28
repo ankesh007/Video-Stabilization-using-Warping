@@ -42,39 +42,49 @@ Since the above was implemented in OpenCV using python, following are some tips 
     \item Remove the \emph{inverse} in the last step of iterative pseudo code.
     \item Compute \emph{Hessian Inverse} in pre-computation part for speedy iteration.
     \item Avoid \emph{for-loops} and compute all operations using in-built numpy functions for performance(Check reference code).
-    \item For video-stabilization, keep an iteration limit apart from $\epsilon$, so that some frames that does warp(converge) gets handled.
+    \item For video-stabilization, keep an \emph{iteration limit} apart from $\epsilon$, so that some frames that does warp(converge) gets handled.
 \end{enumerate}
 
 \section{Assumption}
 \begin{enumerate}
     \item The stabilizer corrects motion upto a certain waver.  
     \item The object being stabilized does not move out of scene in subsequent frames.
-    \item Inverse of Hessian exists.
-    \item The transformation is affine.    
+    \item \emph{Inverse} of Hessian exists.
+    \item The transformation is \emph{affine}.    
 \end{enumerate}
 
-
-
-From the previous section the basic outline of our method should be clear. Our first aim was to calculate the image of the absolute conic. Two approaches for this were considered. Firstly we examined the EXIF data to determine that the focal length used was $9$ mm and we use the model number of camera to find that the sensor width was $5.76$ mm and sensor height was $4.29$ mm. Also the offsets of camera centre in image coordinate was found to be half the image width and height. In totality the camera matrix in pixel coordinates was found to be the following.
-$$ K=  \begin{bmatrix}3100 &0&992\\0 & 3121&744\\0 & 0 & 1 \end{bmatrix} $$
-Using this the image of the absolute conic and it's dual can be found with simple matrix operations as detailed in the theory part. The other approach was to use the orthogonality constraint equation shown earlier to solve for $\omega$ directly. This was abandoned after some tries since finding five orthogonal pairs of line from the image without any error was very hard. After this I found $\omega \mbox{*}$ from the expression $K K^\top$. \\
-Now we identified the three planes in the image and marked pairs of parallel lines in the image in order to find the lins of infinity of the three planes. The marked image is shown in Figure 2. The three planes are - the desired slanting plane, the plane formed by the right side of the CSC building and the plane formed by the ground around the base of the staircase.\\
-From the two points of infinity per plane the line at infinity of each plane was found out. The world coordinate system was assumed to be aligned to the CSC building (all three axes) with the sky in the +Z direction, the library in the +X direction and workshop in the +Y direction (only rough directions). Let $\alpha$ be the angle of the slant plane with the right side of the CSC building and $\beta$ be the angle between the slant surface and the ground plane. Also let $\hat{n} = <a,b,c>$ be the desired normal vector. Then the following equations will give the desired results.
-$$a = \hat{i} \cdot \hat{n}= cos(\alpha) = \dfrac{l_{slant}^\top \omega \mbox{*} l_{csc}^\top}{\sqrt{l_{slant}^\top \omega \mbox{*} l_{slant}^\top}\sqrt{l_{csc}^\top \omega \mbox{*} l_{csc}^\top}} $$
-$$c = \hat{k} \cdot \hat{n}= cos(\beta) = \dfrac{l_{slant}^\top \omega \mbox{*} l_{ground}^\top}{\sqrt{l_{slant}^\top \omega \mbox{*} l_{slant}^\top}\sqrt{l_{ground}^\top \omega \mbox{*} l_{ground}^\top}} $$
-$$ b = \sqrt{1-a^2-c^2}$$
-
-\begin{figure}[ht!]
-    \centering
-    \includegraphics[width=450pt]{maj.jpg}
-    \caption{Marked parallel lines in three planes}
-    \label{giv}
-\end{figure}
-
 \section{Results}
-I found the following values for $<a,b,c>$. The computations were done in MATLAB.
-$$a = -0.0459$$
-$$b = 0.219$$
-$$c = 0.975 $$
-Thus the normal vector was found to be $<-0.0459,  0.219,0.975 >$.
+% \subsection{Experiment 1}
+\begin{table}[h!]
+\centering
+\begin{tabular}{||c | c ||} 
+    \hline
+    Epsilon & Iterations \\
+    [0.5ex]
+    \hline\hline
+    0.05 & 1\\
+    0.01 & 290\\
+    0.005 & 297\\
+    0.001 & 315\\
+    0.0005 & 581\\
+\hline\hline
+
+% 0.05 & 
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item Increasing $\epsilon$ above a certain value, or decreasing below a threshold is futile. \emph{0.005 appeared optimal}.
+    \item Larger resolution Images take \emph{longer time} to converge.
+    \item Sample warped Images and Videos are shown in respective directories.
+    \item The book video has moderate shiver and algorithm successfully tackles it.
+    \item The kitty video has large camera motions and algorithms produces and \emph{unstable output}.
+\end{itemize}
+
+\section {References}
+\begin{enumerate}
+    \item Paper mentioned in implementation bullet 1.
+    \item Video and Picture Credits:\emph{ Suyash Agarwal, Saket Dingliwal}
+\end{enumerate}
 \end{document}
+
