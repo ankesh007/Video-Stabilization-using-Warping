@@ -1,0 +1,70 @@
+
+\date{\today}
+\title{Computer Vision Major Homework Part}
+
+
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{cancel}
+
+\author{
+  Singhal, Madhur\\
+  \texttt{2015CS10235}
+}
+\renewcommand{\labelenumi}{\alph{enumi})}
+
+\begin{document}
+\maketitle
+
+
+\section{Declaration of Originality}
+This is to certify that to the best of my knowledge, the content of this document is my own work. I worked on this in the Vision lab and had discussions with Aman, Suyash, Ankesh, Makkunda, Krunal, Pranjal sir and Saket.
+
+\section{Problem Statement}
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=350pt]{math3.jpg}
+    \caption{Given Image}
+    \label{giv}
+\end{figure}
+We were asked to find the normal to the top slanting surface of the staircase by utilizing the given image.
+\section{Theory}
+
+I utilized results on image formation from the textbook Multi View Geometry. The camera internal matrix is given by the following equation for a CCD camera, where $p_x$ and $p_y$ are camera centre coordinates in image coordinate frame and $f_x$ and $f_y$ are focal lengths in pixel dimensions (different since pixels are assumed to be non square).
+
+$$ K=  \begin{bmatrix}f_x &0&p_x\\0 & f_y&p_y\\0 & 0 & 1 \end{bmatrix} $$
+
+The absolute conic is a three dimensional conic which corresponds to the internal camera parameters. Once we identify the image of the absolute conic in an image many interesting properties about the image can be gleaned.\\ In this assignment we utilize a specific property of the image of the absolute conic. As given on page 218 of the book, the angle between any two planes in the 3D world can be found from the lines of infinity of the imaged planes. 
+$$ cos(\theta) = \dfrac{l_1^\top \omega \mbox{*} l_2^\top}{\sqrt{l_1^\top \omega \mbox{*} l_1^\top}\sqrt{l_2^\top \omega \mbox{*} l_2^\top}}$$
+Here $l_1$ and $l_2$ are the lines at infinity of the two planes and $\omega \mbox{*}$ is the dual of the image of the absolute conic in the image. The relation between the internal camera matrix and the dual conic is as follows.
+$$ \omega \mbox{*} = \omega^{-1} = K K^\top$$
+One way of determining $\omega$ ie the internal calibration is to use lines which are known to be perpendicular and using the following orthogonality constraint on the images of the lines.
+$$  v_1^\top \omega v_2= 0$$
+Five pairs of orthogonal lines can fully specify $\omega$ since it is a symmetric matrix. Thus we can find angles between planes in 3D world from any image if we are able to determine the image of the absolute conic. We can use this fact to calculate the normal we desire by calculating angles of the plane with two other world planes. 
+
+\section{Procedure}
+From the previous section the basic outline of our method should be clear. Our first aim was to calculate the image of the absolute conic. Two approaches for this were considered. Firstly we examined the EXIF data to determine that the focal length used was $9$ mm and we use the model number of camera to find that the sensor width was $5.76$ mm and sensor height was $4.29$ mm. Also the offsets of camera centre in image coordinate was found to be half the image width and height. In totality the camera matrix in pixel coordinates was found to be the following.
+$$ K=  \begin{bmatrix}3100 &0&992\\0 & 3121&744\\0 & 0 & 1 \end{bmatrix} $$
+Using this the image of the absolute conic and it's dual can be found with simple matrix operations as detailed in the theory part. The other approach was to use the orthogonality constraint equation shown earlier to solve for $\omega$ directly. This was abandoned after some tries since finding five orthogonal pairs of line from the image without any error was very hard. After this I found $\omega \mbox{*}$ from the expression $K K^\top$. \\
+Now we identified the three planes in the image and marked pairs of parallel lines in the image in order to find the lins of infinity of the three planes. The marked image is shown in Figure 2. The three planes are - the desired slanting plane, the plane formed by the right side of the CSC building and the plane formed by the ground around the base of the staircase.\\
+From the two points of infinity per plane the line at infinity of each plane was found out. The world coordinate system was assumed to be aligned to the CSC building (all three axes) with the sky in the +Z direction, the library in the +X direction and workshop in the +Y direction (only rough directions). Let $\alpha$ be the angle of the slant plane with the right side of the CSC building and $\beta$ be the angle between the slant surface and the ground plane. Also let $\hat{n} = <a,b,c>$ be the desired normal vector. Then the following equations will give the desired results.
+$$a = \hat{i} \cdot \hat{n}= cos(\alpha) = \dfrac{l_{slant}^\top \omega \mbox{*} l_{csc}^\top}{\sqrt{l_{slant}^\top \omega \mbox{*} l_{slant}^\top}\sqrt{l_{csc}^\top \omega \mbox{*} l_{csc}^\top}} $$
+$$c = \hat{k} \cdot \hat{n}= cos(\beta) = \dfrac{l_{slant}^\top \omega \mbox{*} l_{ground}^\top}{\sqrt{l_{slant}^\top \omega \mbox{*} l_{slant}^\top}\sqrt{l_{ground}^\top \omega \mbox{*} l_{ground}^\top}} $$
+$$ b = \sqrt{1-a^2-c^2}$$
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=450pt]{maj.jpg}
+    \caption{Marked parallel lines in three planes}
+    \label{giv}
+\end{figure}
+
+\section{Results}
+I found the following values for $<a,b,c>$. The computations were done in MATLAB.
+$$a = -0.0459$$
+$$b = 0.219$$
+$$c = 0.975 $$
+Thus the normal vector was found to be $<-0.0459,  0.219,0.975 >$.
+\end{document}

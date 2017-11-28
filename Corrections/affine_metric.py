@@ -55,15 +55,16 @@ def affine_correct(input_image,points_on_image):
 
     vanishing_line=get_line(vanishing_point_1,vanishing_point_2)
     print vanishing_line
+
     affine_correct_projection=np.array([[1,0,0],[0,1,0],vanishing_line])
     destination=cv2.warpPerspective(input_image,affine_correct_projection,(input_image.shape[1],input_image.shape[0]))
     return destination
     
 def metric_correction(image,refPt):
 
-    if(len(refPt)<4):
-        print "Incomplete Selection"
-        return image
+	if(len(refPt)<4):
+		print "Incomplete Selection"
+		return image
 
 	pt1=np.asarray(refPt,dtype=np.float32)
 	dist=(refPt[1][0]-refPt[0][0])
@@ -80,9 +81,15 @@ def main():
     image=cv2.imread(input_image_path)
     points=get_points(image)
 
+    # Following function works when 4 points are selected such as 1,2,4,3 forms a square in anti-clockwise sense
     affine_corrected=affine_correct(image,points)
     metric_corrected=metric_correction(image,points)
+    print  affine_corrected.shape
+    print image.shape
+    print metric_corrected.shape
+    # mosaic_image=np.concatenate((image,np.ones([image.shape[0],3]),affine_corrected,np.ones([image.shape[0],3]),metric_corrected),axis=1)
     mosaic_image=np.concatenate((image,affine_corrected,metric_corrected),axis=1)
+    # print mosaic_image.shape
     cv2.imwrite("AffineCorrected.jpg",affine_corrected)
     cv2.imwrite("MetricCorrected.jpg",metric_corrected)
     cv2.imwrite("Mosaiced.jpg",mosaic_image)
