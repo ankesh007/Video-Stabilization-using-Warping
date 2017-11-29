@@ -24,7 +24,7 @@ python affine_metric.py <input_video_path>
 ## Notes on running the code
 
 1. The code has been tested and developed in ***python2*** using ***Ubuntu 16.04***.
-2. For part 2 of Assignment 2, there are 2 codes. The one mentioned above focus on ***stabilizing complete frame***. The other in directory stabilizes a ***template***. In either case you are asked to select a template.
+2. For part 2 of Assignment 2, there are 2 codes. The one mentioned above focus on ***stabilizing complete frame***. The other in directory stabilizes a ***template***. In either case you are asked to select a template. Press `esc` after selecting bounding rectangle(2 points)
 
 ## Notes on directories
 
